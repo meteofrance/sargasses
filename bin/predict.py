@@ -7,7 +7,6 @@ import torch
 from einops import rearrange
 from torch import Tensor
 
-from sargasses.git_log import ckpt_git_tag_is_compatible
 from sargasses.plmodule import SargassesLightningModule
 from sargasses.plots import compute_masks_tp_pf_fn, plot_prediction
 from sargasses.sample import Sample
@@ -29,10 +28,6 @@ def ckpt_predict(
     Returns:
         np.ndarray: Prediction, masked if altitude_mask argument is given.
     """
-
-    # Check git tag compatiblity
-    # Send warning, do not prevent execution if version mismatch
-    ckpt_git_tag_is_compatible(ckpt_path=ckpt_path)
 
     # Load model
     model = SargassesLightningModule.load_from_checkpoint(ckpt_path)

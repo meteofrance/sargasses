@@ -9,7 +9,6 @@ fit_and_val.py
     --config experiment/folder/config.yaml
 ```
 
-=> warn if mismatch between ckpt and current git tag.
 => error if mismatch between ckpt and current init args
     in LightningModule or DataModule.
 

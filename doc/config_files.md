@@ -100,7 +100,6 @@ With the previous exemples, you should be able to understand the part of the con
 - [Trainer](https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.trainer.trainer.Trainer.html#lightning.pytorch.trainer.trainer.Trainer).
 - [TensorBoardLogger](https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.loggers.tensorboard.html#module-lightning.pytorch.loggers.tensorboard).
 - [ModelCheckpoint](https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.callbacks.ModelCheckpoint.html#lightning.pytorch.callbacks.ModelCheckpoint).
-- [GitLogCallback](../sargasses/git_log.py).
 ```yaml
 trainer:
   logger:
@@ -116,7 +115,6 @@ trainer:
         filename: "ckpt-{epoch:02d}-{val_loss:.2f}"
         save_weights_only: false
         save_top_k: -1
-    - class_path: sargasses.git_log.GitLogCallback
   max_epochs: 1
   max_steps: 1
   fast_dev_run: false
@@ -160,7 +158,6 @@ trainer:
         filename: "ckpt-{epoch:02d}-{val_loss:.2f}"
         save_weights_only: false
         save_top_k: -1
-    - class_path: sargasses.git_log.GitLogCallback
   max_epochs: 1
   max_steps: 1
   fast_dev_run: false
