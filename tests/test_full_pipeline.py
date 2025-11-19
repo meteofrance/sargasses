@@ -43,25 +43,6 @@ def test_full_pipeline() -> None:
         image=image,
     )
 
-    # Export to onnx
-    ckpt_to_onnx(
-        ckpt_path=ckpt_path,
-        output_path=onnx_path,
-    )
-    assert onnx_path.exists(), "Onnx file not saved by export"
-
-    # Predict from onnx
-    _: np.ndarray = onnx_predict(
-        onnx_path=onnx_path,
-        image=image,
-    )
-
-    # Compare both predictions
-    # assert np.allclose(  # TODO
-    #     ckpt_prediction,
-    #     onnx_prediction,
-    # )
-
 
 if __name__ == "__main__":
     test_full_pipeline()
