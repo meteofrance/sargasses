@@ -1,6 +1,6 @@
 FROM pytorch/pytorch:2.6.0-cuda11.8-cudnn9-devel
 
-RUN $MY_APT update && $MY_APT install -y curl gcc g++ nano sudo libgeos-dev libeccodes-dev libeccodes-tools git vim libtiff5 openssh-server
+RUN apt-get update && apt-get install -y curl gcc g++ nano sudo libgeos-dev libeccodes-dev libeccodes-tools git vim libtiff5 openssh-server
 
 ARG USERNAME
 ARG GROUPNAME
