@@ -74,7 +74,7 @@ model:
 ```
 > ⚠️ the `model` key word is used twice in the config file, the first one is the name the `LightningCLI` gives to the `LightningModule` it will instantiate. The seconde one is the `__init__()` parameter of the `SargassesLightningModule` we defined.
 
-Now, by referencing the mftools [DiceLoss](../../../libs/mftools/torch/losses.py), you should be able to understand the full `LightningModule` config:
+Now, by referencing mfai's [DiceLoss](https://github.com/meteofrance/mfai/blob/main/mfai/pytorch/losses/toolbelt.py), you should be able to understand the full `LightningModule` config:
 ```yaml
 # config.yaml
 
@@ -89,7 +89,7 @@ model:
         - 64
         - 64
   loss:
-    class_path: mftools.torch.losses.DiceLoss
+    class_path: mfai.pytorch.losses.tooldbelt.DiceLoss
     init_args:
       mode: "binary"
 ```
