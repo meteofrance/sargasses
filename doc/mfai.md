@@ -64,6 +64,6 @@ This transform randomly crops an input image to a 512x512 image, with min 15% of
 ## Onnx export and inference
 `mfai`'s models comme with onnx capabilities. We use them to export and infer our model.
 
-| Reference |
-| --------- |
+| Reference                                                                               |
+| --------------------------------------------------------------------------------------- |
 | [`mfai` source](https://github.com/meteofrance/mfai/blob/main/mfai/pytorch/__init__.py) |

@@ -29,6 +29,8 @@ You can read it here: [SargassesLightningModule](../sargasses/plmodule.py)
 # Lightning CLI
 lightning_cli is a command line interface for your train / test / val and predict needs. LightningCli ensures that your configurations are separate from your source code and that your experiments are reproducible.
 
+You can read about this projects [config files](./config_files.md).
+
 You can customize it by implementing the LightningCli class. See the [doc](https://lightning.ai/docs/pytorch/stable/cli/lightning_cli.html), [ref](https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.cli.LightningCLI.html#lightning.pytorch.cli.LightningCLI), [source](https://lightning.ai/docs/pytorch/stable/_modules/lightning/pytorch/cli.html#LightningCLI).
 
 In this project, it was not necessary, you can still read our implementation (that does nothing)[SargassesLightningCli](../sargasses/cli.py)
