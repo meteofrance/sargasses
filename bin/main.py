@@ -5,23 +5,12 @@ for better checkpoint management.
 - Use `bin/predict.py` to run inference from a checkpoint.
 """
 
-from lightning.pytorch.core import LightningDataModule
-
 from sargasses.cli import SargassesLightningCLI
 from sargasses.datamodule import SargassesDataModule
 from sargasses.plmodule import SargassesLightningModule
 
-
-def cli_main(
-    datamodule: type[LightningDataModule] = SargassesDataModule,
-    args: list[str] = None,
-) -> None:
+if __name__ == "__main__":
     SargassesLightningCLI(
         model_class=SargassesLightningModule,
-        datamodule_class=datamodule,
-        args=args,
+        datamodule_class=SargassesDataModule,
     )
-
-
-if __name__ == "__main__":
-    cli_main()
