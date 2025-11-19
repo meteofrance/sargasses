@@ -1,0 +1,40 @@
+model:
+  model: 
+    class_path: mfai.pytorch.models.half_unet.HalfUNet
+    init_args:
+      in_channels: 3
+      out_channels: 1
+      input_shape:
+        - 64
+        - 64
+      settings:
+        autopad_enabled: true
+        num_filters: 16
+        use_ghost: false
+  type_segmentation: "binary"
+  loss:
+    class_path: mfai.pytorch.losses.toolbelt.DiceLoss
+    init_args:
+      mode: "binary"
+
+data: 
+  batch_size: 1
+
+trainer:
+  max_epochs: 1
+  enable_progress_bar: false
+  logger:
+    class_path: lightning.pytorch.loggers.TensorBoardLogger
+    init_args:
+      default_hp_metric: false
+      save_dir: /tmp
+      name: sargasses_unittests
+  callbacks:
+    - class_path: lightning.pytorch.callbacks.ModelCheckpoint
+      init_args:
+        monitor: "val_loss"
+        filename: "checkpoint"
+        save_weights_only: false
+    - class_path: lightning.pytorch.callbacks.ModelSummary
+      init_args:
+        max_depth: 1
