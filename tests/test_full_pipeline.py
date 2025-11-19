@@ -3,8 +3,6 @@ from pathlib import Path
 import numpy as np
 
 from bin.fit_and_val import fit_and_val
-from bin.onnx.ckpt_to_onnx import ckpt_to_onnx
-from bin.onnx.predict_onnx import onnx_predict
 from bin.predict import ckpt_predict
 from sargasses.sample import Sample
 from tests import SargassesDataModuleTest
@@ -25,7 +23,6 @@ def test_full_pipeline() -> None:
     log_folder = Path("/tmp/sargasses_unittests")
     ckpt_path = log_folder / "version_0/checkpoints/checkpoint.ckpt"
     image_path = Path("tests/data/20220401S3_OTCI.png")
-    onnx_path = log_folder / "model.onnx"
 
     # Train with a test config.
     # This config writes a checkpoint file at:
