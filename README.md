@@ -8,28 +8,24 @@ The goal of this project is to detect Sargassum shoals on Sentinel 3 satellite i
 
 This procedure has been tested on a EWC ECMWF developement machine with A100 GPU.
 
-Firs we install micromamba :
-
+Micromamba install :
 ```bash
  "${SHELL}" <(curl -L micro.mamba.pm/install.sh)
 ```
 
-We activate micromamba :
-
+Micromamba source and update :
 ```bash
  source ~/.bashrc
  micromamba self-update
  ```
 
- We create and activate a dedicated environment for the project :
-
+Activate a dedicated environment for the project :
 ```bash
 micromamba create -p /scratch/dev/sarg
 micromamba activate /scratch/dev/sarg
 ```
 
-We install python 3.11 and the requirements
-
+Install python 3.11 and the requirements
 ```bash
 micromamba install python=3.11.*
 pip install --index-url https://download.pytorch.org/whl/cu124 torchvision==0.21.0+cu12 torch==2.6.0+cu12
