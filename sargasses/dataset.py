@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import torch
-from mftools.torch.transforms import RandomCropWithMinPositivePixels
+from mfai.pytorch.transforms import RandomCropWithMinPositivePixels
 from torch import Tensor
 from tqdm import tqdm
 
