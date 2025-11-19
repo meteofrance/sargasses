@@ -1,0 +1,160 @@
+[tool.sourcery-analytics]
+
+[tool.sourcery-analytics.thresholds]
+method_length = 64
+method_cyclomatic_complexity = 26
+method_cognitive_complexity = 34
+method_working_memory = 45
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+builtins = ["_"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+
+[tool.ruff.lint]
+select = [
+  "I",  # I = isort
+  "F",  # pyflakes
+  "W",  # pycodestyle warnings
+  "E",  # pycodestyle errors
+  "D",  # pydocstyle
+]
+ignore = [
+    "D100",  # Allow undocumented-public-module
+    "D200",  # Allow unnecessayry-multiline-docstring
+    "D202",  # Allow blank-line-after-function after function docstring
+    "D203",  # Allow incorrect-blank-line-before-class
+    "D205",  # Allow missing-blank-line-after-summary
+    "D212",  # Allow multi-line-summary-first-line
+    "D213",  # Allow multi-line-summary-second-line
+    "D415",  # Allow missing-terminal-punctuation
+
+    # Temporary, to be removed once refacto done:
+    "D101",  # Allow undocumented-public-class
+    "D102",  # Allow undocumented-public-method
+    "D103",  # Allow undocumented-public-function
+    "D104",  # Allow undocumented-public-package
+    "D105",  # Allow undocumented-magic-method
+    "D107",  # Allow undocumented-public-init
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+# ignore-var-parameters = true
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 88
+ignore-overlong-task-comments = true
+
+[tool.ruff.lint.flake8-unused-arguments]
+ignore-variadic-names = true
+
+
+[tool.pyright]
+# https://microsoft.github.io/pyright/#/configuration?id=sample-pyprojecttoml-file
+
+## Run options
+include = [
+  "bin",
+  "sargasses",
+  "oper",
+  "tests",
+]
+ignore = [
+]
+
+verboseOutput = true
+
+reportMissingImports = "error"
+reportMissingTypeStubs = false
+
+pythonVersion = "3.11"
+pythonPlatform = "Linux"
+
+useLibraryCodeForTypes = true
+
+## Type hinting options
+# Disallow list[Any] and set[any], forces to fully type them.
+strictListInference = true
+strictSetInference = true
+# Allow dict[Any] as complex dict structures make typing irelevant.
+strictDictionaryInference = false
+
+# Analyse everything
+analyzeUnannotatedFunctions = true
+
+# Allow implicit optional in function parameter definition.
+# def foo(param: int = None) -> None:
+strictParameterNoneValue = false
+
+enableTypeIgnoreComments = true  # Allows  # type: ignore
+
+deprecateTypingAliases = true  # Deprecates the use of typing.List, Dict, ...
+
+## Type checking rules
+# When a class @property getter and setter have different types.
+reportPropertyTypeMismatch = "error"
+
+# Cyclical import chains slow down type analysis and hint at architectural layering issues.
+reportImportCycles = "none"
+
+reportUnusedImport = "error"
+
+reportDuplicateImport = "error"
+
+reportWildcardImportFromLibrary = "error"
+
+reportUntypedFunctionDecorator = "error"
+
+reportUntypedClassDecorator = "error"
+
+reportUntypedBaseClass = "error"
+
+reportUntypedNamedTuple = "error"
+
+reportPrivateUsage = "error"
+
+reportTypeCommentUsage = "error"
+
+reportPrivateImportUsage = "error"
+
+reportConstantRedefinition = "error"
+
+# reportDeprecated [boolean or string, optional]: Generate or suppress diagnostics for use of a class or function that has been marked as deprecated. The default value for this setting is "none".
+
+reportInconsistentConstructor = "error"
+
+reportUninitializedInstanceVariable = "none"
+
+# Disallow input or return parameters for functions or methods that have an unknown type
+reportUnknownParameterType = "none"
+reportUnknownArgumentType = "none"
+reportUnknownLambdaType = "none"
+reportUnknownVariableType = "none"
+reportUnknownMemberType = "none"
+
+reportMissingParameterType = "error"
+reportMissingTypeArgument = "none"
+
+reportCallInDefaultInitializer = "none"
+
+reportUnnecessaryIsInstance = "error"
+reportUnnecessaryCast = "error"
+reportUnnecessaryComparison = "error"
+reportUnnecessaryContains = "error"
+reportAssertAlwaysTrue = "error"
+reportImplicitStringConcatenation = "none"
+
+reportUnusedExpression = "error"
+
+reportUnnecessaryTypeIgnoreComment = "error"
+
+reportMatchNotExhaustive = "error"
+
+reportUnreachable = "none"
+
+reportImplicitOverride = "none"  # Because @override decorator is 3.12 >

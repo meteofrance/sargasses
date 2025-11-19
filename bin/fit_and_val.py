@@ -1,0 +1,92 @@
+"""Script that fit and valid a model.
+Use cases:
+1.
+`fit_and_val.py --config config/path.yaml`
+2.
+```
+fit_and_val.py
+    --ckpt_path experiment/folder/checkpoint.ckpt
+    --config experiment/folder/config.yaml
+```
+
+=> warn if mismatch between ckpt and current git tag.
+=> error if mismatch between ckpt and current init args
+    in LightningModule or DataModule.
+
+Default values for a config file can be displayed with:
+```
+runai python bin/main.py fit --print_config
+```
+"""
+
+import argparse
+import sys
+from pathlib import Path
+
+from lightning.pytorch.core import LightningDataModule
+
+from sargasses.cli import SargassesLightningCLI
+from sargasses.datamodule import SargassesDataModule
+from sargasses.plmodule import SargassesLightningModule
+
+
+def fit_and_val(
+    datamodule_cls: type[LightningDataModule] = SargassesDataModule,
+    args: list[str] = None,
+    ckpt_path: str = None,
+) -> None:
+    """Fits and validates a model.
+
+    Args:
+        datamodule_cls: What data module to use for fitting and validation.
+        args: arguments givent to the SargassesLightningCLI object.
+            Allows configuration arguments such as:
+                ['--config', 'config/file/path.yaml']
+        ckpt_path: loads a model from a checkpoint before fitting and validation.
+    """
+    # Create cli object with `run=False` to parse and instantiate
+    # LightningModule and DataModule, but not run subcommands
+    cli = SargassesLightningCLI(
+        model_class=SargassesLightningModule,
+        datamodule_class=datamodule_cls,
+        args=args,
+        run=False,
+    )
+
+    # Load model from checkpoint if one is given
+    if ckpt_path is not None:
+        cli.model = SargassesLightningModule.load_from_checkpoint(ckpt_path)
+
+    # Train
+    cli.datamodule.setup(stage="fit")
+    cli.trainer.fit(cli.model, datamodule=cli.datamodule)
+
+    # Validate
+    cli.datamodule.setup(stage="validate")
+    cli.trainer.validate(cli.model, cli.datamodule.val_dataloader(), ckpt_path="best")
+
+
+if __name__ == "__main__":
+    # Parse ckpt_path argument and remove it from sys.argv as
+    # it is not expected by LightningCli
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--ckpt_path", type=str, default=None, dest="ckpt_path")
+    parsed_arguments, unparsed_arguments = (
+        parser.parse_known_args()
+    )  # only parse ckpt_path
+    sys.argv = (
+        sys.argv[:1] + unparsed_arguments
+    )  # remove parsed arguments from sys.argv
+
+    # Update args with checkpoint's config file path if necessary
+    config_args = None
+    if parsed_arguments.ckpt_path is not None:
+        if not ("--config" in sys.argv or "-c" in sys.argv):
+            config_path = Path(parsed_arguments.ckpt_path).parent.parent / "config.yaml"
+            config_args = ["--config", str(config_path)]
+
+    fit_and_val(
+        datamodule_cls=SargassesDataModule,
+        args=config_args,
+        ckpt_path=parsed_arguments.ckpt_path,
+    )
