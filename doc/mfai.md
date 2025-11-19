@@ -36,7 +36,7 @@ The sargasses project uses `mfai`'s implementation of `pytorch-lightning`'s `Lig
 | [lightning doc](https://lightning.ai/docs/pytorch/stable/common/lightning_module.html)                        |
 
 
-# Transform
+## Transform
 `mfai` offers multiple transforms that perform common data transformations. To adapat our dataset, we used the [RandomCropWithMinPositivePixels](https://github.com/meteofrance/mfai/blob/main/mfai/pytorch/transforms.py#L8).
 
 This transform randomly crops an input image to a 512x512 image, with min 15% of positive pixels.
@@ -48,3 +48,22 @@ This transform randomly crops an input image to a 512x512 image, with min 15% of
 | [pytorch doc](https://docs.pytorch.org/vision/stable/transforms.html)                                        |
 | [pytorch guide](https://docs.pytorch.org/vision/stable/auto_examples/transforms/plot_custom_transforms.html) |
 
+
+
+## NamedTensors
+
+`pytorch`'s NamedTensors has not been approved yet and is pending validation. In the mean time, we use `mfai`'s own NamedTensors, tensors with named dimensions and feature dimensions.
+
+| References                                                                                 |
+| ------------------------------------------------------------------------------------------ |
+| [`mfai` doc](https://github.com/meteofrance/mfai/blob/main/doc/namedtensor.md)             |
+| [`mfai` source](https://github.com/meteofrance/mfai/blob/main/mfai/pytorch/namedtensor.py) |
+|                                                                                            |
+
+
+## Onnx export and inference
+`mfai`'s models comme with onnx capabilities. We use them to export and infer our model.
+
+| Reference |
+| --------- |
+| [`mfai` source](https://github.com/meteofrance/mfai/blob/main/mfai/pytorch/__init__.py) |
