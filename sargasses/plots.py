@@ -8,6 +8,75 @@ from matplotlib.figure import Figure
 from matplotlib.patches import Patch
 from torch import Tensor
 
+from sargasses.sample import Sample
+
+
+def plot_xy(
+    input_image: Tensor,
+    target_mask: Tensor,
+    crop: tuple[int, int, int, int] | None = None,
+    title: str = "",
+    save_path: Path | None = None,
+) -> None:
+    """Plot with side by side an input image and a target mask.
+
+    Args:
+        input_image: The input image, shape (1, height, width).
+        target_mask: The target mask, shape (channels, height, width).
+        crop: Crop coordinates (top, left, right, bottom). Defaults to None.
+        title: The plot's title. Defaults to "".
+        save_path: Where to save the plot, or None. If None, shows the plot.
+            Defaults to None.
+    """
+
+    # Crop
+    if crop is not None:
+        input_image = input_image[crop[0] : crop[1], crop[2] : crop[3]]
+        target_mask = target_mask[crop[0] : crop[1], crop[2] : crop[3]]
+
+    # Plot
+    _, axs = plt.subplots(1, 2, figsize=(15, 7))
+    axs[0].imshow(torch.moveaxis(input_image, 0, -1).int())
+    axs[0].set_title("Input otci image.")
+    axs[1].imshow(torch.moveaxis(target_mask, 0, -1).int())
+    axs[1].set_title("Target mask.")
+
+    # Title
+    title = title if title != "" else "Sargasses input / target plot."
+    plt.suptitle(title)
+
+    # Save or show
+    plt.tight_layout()
+    if save_path is None:
+        plt.show()
+    else:
+        plt.savefig(save_path)
+
+
+def plot_sample(
+    sample: Sample,
+    crop: tuple[int, int, int, int] | None = None,
+    title: str = "",
+    save_path: Path | None = None,
+) -> None:
+    """Plots side by side a sample's input image and a its target mask.
+
+    Args:
+        sample: The sample to plot.
+        crop: Crop coordinates (top, left, right, bottom). Defaults to None.
+        title: The plot's title. Defaults to "".
+        save_path: Where to save the plot, or None. If None, shows the plot.
+            Defaults to None.
+    """
+
+    plot_xy(
+        input_image=torch.from_numpy(sample.otci),
+        target_mask=torch.from_numpy(sample.label_mask),
+        crop=crop,
+        title=title,
+        save_path=save_path,
+    )
+
 
 def plot_pred_and_target(y: Tensor, y_hat: Tensor) -> Figure:
     """Returns a plot of a prediction and target.

@@ -1,5 +1,7 @@
 # mfai
 
+This project require the lib `mfai`. You can install it with pip or any other 
+
 `mfai` is Meteo-France's Artificial Intelligence Python Package. It is a collection of neural network architectures and training tools developped by Météo France AI-lab.
 
 `mfai`'s models and other tools all conform to the same interface, allowing you to swap one for an other.

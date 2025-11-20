@@ -1,24 +1,19 @@
-import warnings
 from datetime import datetime
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torchvision.transforms.functional as TF
-import xarray as xr
 from mfai.pytorch.transforms import RandomCropWithMinPositivePixels
 from PIL import Image
 from torch import Tensor
 
 from sargasses.settings import (
-    CLOUD_MASK_PATH,
     CROP_SIZE,
     DATASET_PATH,
     MIN_POSITIVE_PERC,
     NETCDF_PATH,
     OTCI_PATH,
-    PLOTS_PATH,
     SHAPE_IMGS,
     TRIES,
 )
@@ -86,44 +81,6 @@ class Sample:
         res[: arr.shape[0], : arr.shape[1], :] = arr
         return res
 
-    @property
-    def cloud_mask(self) -> np.ndarray:
-        filepath = list(CLOUD_MASK_PATH.glob(f"{self.date_str}*.nc"))[0]
-        with xr.open_dataset(filepath) as ds:
-            return ds.valid_mask.values
-
-    @property
-    def land_sea_mask(self) -> np.ndarray | None:
-        if self.nc_folder is None:
-            warnings.warn(
-                "\nsargasses.dataset.Sample.__init__()\n\t"
-                "no .nc found for date {self.date}"
-            )
-            return None
-
-        with xr.open_dataset(self.nc_folder / "geo_coordinates.nc") as ds:
-            alti = ds.altitude.values
-            return np.where(alti > -30, 1, 0)
-
-    def plot(self, crop: tuple[int, ...] | None = None, save: bool = True) -> None:
-        _, axs = plt.subplots(1, 2, figsize=(15, 7))
-        if crop is not None:
-            otci = self.otci[crop[0] : crop[1], crop[2] : crop[3]]
-            label = self.label_mask[crop[0] : crop[1], crop[2] : crop[3]]
-        else:
-            otci, label = self.otci, self.label_mask
-        axs[0].imshow(otci)
-        axs[0].set_title("OTCI")
-        axs[1].imshow(label)
-        axs[1].set_title("Label Mask")
-        plt.suptitle(self.date_str)
-        plt.tight_layout()
-        if save:
-            plt.savefig(PLOTS_PATH / f"{self.date_str}_{self.annotator}.png")
-        else:
-            plt.show()
-        plt.close()
-
     def get_xy(self) -> tuple[Tensor, Tensor]:
         """Returns the sample's input image and target mask.
 
@@ -140,13 +97,8 @@ class Sample:
         y = torch.unsqueeze(y, 0)
         return x, y
 
-    def get_random_cropped_xy(self) -> tuple[Tensor, Tensor, int, int]:
-        x, y = self.get_xy()
-        cropped_x, cropped_y, left, top = cropper((x, y))
-        return cropped_x, cropped_y, left, top
-
     def get_cropped_xy(
-        self, top: int, left: int, load: bool = True
+        self, top: int, left: int, load_from_cache: bool = True
     ) -> tuple[Tensor, Tensor]:
         """Returns a crop of the sample's input image and target mask.
 
@@ -161,7 +113,7 @@ class Sample:
             Tensor: Crop of the target mask, shape (1, height, width).
         """
         cropped_file = DATASET_PATH / f"{self.path_algae_mask.stem}_{top}_{left}.npy"
-        if cropped_file.exists() and load:
+        if cropped_file.exists() and load_from_cache:
             arr = np.load(cropped_file)
             cropped_x, cropped_y = arr[:3], arr[-1:]
         else:
@@ -169,25 +121,3 @@ class Sample:
             cropped_x = TF.crop(x, top, left, CROP_SIZE[0], CROP_SIZE[1]).float()
             cropped_y = TF.crop(y, top, left, CROP_SIZE[0], CROP_SIZE[1]).float()
         return cropped_x, cropped_y
-
-    def save_crop(self, top: int, left: int) -> None:
-        cropped_x, cropped_y = self.get_cropped_xy(top, left, load=False)
-        x, y = cropped_x.numpy(), cropped_y.numpy()
-        arr = np.concatenate([x, y])
-        filename = f"{self.path_algae_mask.stem}_{top}_{left}.npy"
-        np.save(DATASET_PATH / filename, arr)
-
-    def get_x_prediction(self) -> Tensor:
-        """Increases size of full x input to fit in neural network for prediction."""
-        x, _ = self.get_xy()
-        # get original shapes for full size images
-        _, dim_x, dim_y = x.shape
-        # compute shapes mutiple of 64
-        new_dim_x = (int(dim_x / 64) + 1) * 64
-        new_dim_y = (int(dim_y / 64) + 1) * 64
-        # add batch dim to original input
-        x = torch.unsqueeze(x, dim=0)
-        # created input multiple of 64 containing x
-        x_reshaped = torch.zeros(1, 3, new_dim_x, new_dim_y)
-        x_reshaped[:, :, :dim_x, :dim_y] += x
-        return x_reshaped

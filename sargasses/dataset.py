@@ -83,18 +83,9 @@ class SargassesDataset(torch.utils.data.Dataset):
         x, y = sample.get_cropped_xy(top, left)
         return Tensor(x), Tensor(y)
 
-    def plot_xy(self, x: Tensor, y: Tensor, title: str = "") -> None:
-        _, axs = plt.subplots(1, 2, figsize=(15, 7))
-        axs[0].imshow(torch.moveaxis(x, 0, -1).int())
-        axs[0].set_title("OTCI")
-        axs[1].imshow(torch.moveaxis(y, 0, -1).int())
-        axs[1].set_title("Label Mask")
-        plt.suptitle(title)
-        plt.tight_layout()
-        plt.show()
-
 
 if __name__ == "__main__":
+    from sargasses.plots import plot_sample, plot_xy
     """Dataset inspection.
     Helps developpers to peer into the inner working of the
     Dataset class and make manual checks.
@@ -103,17 +94,17 @@ if __name__ == "__main__":
     sample = Sample(path_label)
 
     # Plot whole sample
-    sample.plot(save=False)
+    plot_sample(sample)
 
     # Plot a small area
-    sample.plot((0, 512, 1500, 2012), save=False)
-    sample.plot((2500, 3012, 2000, 2512), save=False)
+    plot_sample(sample, crop=(0, 512, 1500, 2012))
+    plot_sample(sample, crop=(2500, 3012, 2000, 2512))
 
     # Create dataset and plot some samples
     dataset = SargassesDataset("train")
     for i in tqdm([100, 300, 20000]):
         x, y = dataset[i]
-        dataset.plot_xy(x, y, f"Sample index: {i}")
+        plot_xy(x, y, title=f"Sample index: {i}")
 
     # Plots repartition of crops for all samples
     for path in tqdm(sorted(list(ALGAE_MASK_PATH.glob("*.npz")))):
