@@ -12,13 +12,25 @@ from sargasses.plots import plot_pred_and_target
 
 
 class SargassesLightningModule(SegmentationLightningModule):
+    """The sargasses project lightning Module.
+    Implements mfai's `SegmentationLightningModule`, a lightning module
+    specialized in segmentation tasks.
+    """
+
     def __init__(
         self,
         model: ModelABC,
-        type_segmentation: Literal["binary", "multiclass", "multilabel", "regression"],
+        segmentation_type: Literal["binary", "multiclass", "multilabel", "regression"],
         loss: torch.nn.modules.loss._Loss,  # type: ignore[reportPrivateUsage]
     ) -> None:
-        super().__init__(model, type_segmentation, loss)  # type: ignore[reportArgumentType]
+        """
+        Args:
+            model: A model that implement the mfai's interface.
+            segmentation_type: Segmentation type, either 'binary',
+                'multiclass', 'multilabel' or 'regression.
+            loss: The loss to use in training.
+        """
+        super().__init__(model, segmentation_type, loss)  # type: ignore[reportArgumentType]
 
         self.metrics["AUROC"] = AUROC(task="binary", thresholds=100)
 

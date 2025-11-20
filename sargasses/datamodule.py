@@ -69,6 +69,7 @@ class SargassesDataModule(LightningDataModule):
             raise NotImplementedError("Use script `bin/predict.py` for predictions")
 
     def train_dataloader(self) -> DataLoader[tuple[Tensor, Tensor]]:
+        """ "Returns the train dataloader."""
         return DataLoader(
             self.train_dataset,
             batch_size=self.batch_size,
@@ -78,6 +79,7 @@ class SargassesDataModule(LightningDataModule):
         )
 
     def val_dataloader(self) -> DataLoader[tuple[Tensor, Tensor]]:
+        """ "Returns the validation dataloader."""
         return DataLoader(
             self.val_dataset,
             batch_size=self.batch_size,
@@ -87,6 +89,7 @@ class SargassesDataModule(LightningDataModule):
         )
 
     def test_dataloader(self) -> DataLoader[tuple[Tensor, Tensor]]:
+        """ "Returns the test dataloader."""
         # for test, batch_size = 1 to log loss and metrics for each sample
         return DataLoader(
             self.test_dataset,

@@ -34,12 +34,12 @@ ignore = [
     "D415",  # Allow missing-terminal-punctuation
 
     # Temporary, to be removed once refacto done:
-    "D101",  # Allow undocumented-public-class
-    "D102",  # Allow undocumented-public-method
-    "D103",  # Allow undocumented-public-function
-    "D104",  # Allow undocumented-public-package
-    "D105",  # Allow undocumented-magic-method
-    "D107",  # Allow undocumented-public-init
+    # "D101",  # Allow undocumented-public-class
+    # "D102",  # Allow undocumented-public-method
+    # "D103",  # Allow undocumented-public-function
+    # "D104",  # Allow undocumented-public-package
+    # "D105",  # Allow undocumented-magic-method
+    # "D107",  # Allow undocumented-public-init
 ]
 
 [tool.ruff.lint.pydocstyle]
