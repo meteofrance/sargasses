@@ -7,16 +7,16 @@ Config files are used by `LightningCLI` to instantiate the `LightningModule`, `D
 
 
 ## Datamodule
-This is made obvious when comparing the `SargassesDataModule.__init__()` parameters and the corresponding attributes in the config.
+This is made obvious when comparing the [`SargassesDataModule.__init__()`](../sargasses/datamodule.py#L16) parameters and the corresponding attributes in the config.
 ```py
 # sargasses/datamodule.py
 
 class SargassesDataModule(LightningDataModule):
     def __init__(
         self,
-        batch_size: int,  # > 0
-        num_workers: int,  # > 0
-        pct_in_train: float,  # ∈ [0, 1]
+        batch_size: int,
+        num_workers: int,
+        pct_in_train: float,
     ) -> None:
 ```
 ```yaml
@@ -29,7 +29,7 @@ data:
 ```
 
 ## Model
-Here, the arguments for the `LightningModule` are a bit more complicated, let's detail them:
+Here, the arguments for the [`LightningModule`](../sargasses/plmodule.py) are a bit more complicated, let's detail them:
 ```py
 # sargasses/lightning_module.py
 
@@ -47,7 +47,7 @@ model:
   type_segmentation: "binary"
 ```
 
-On the other hand, the `model` parameter is an instance of a class that implement `ModelABC`. This means that we need to give `LightningCLI` the class path and the necessary parameters to instantiate this specific class. Let's choose `mfai.pytorch.models.swineunetr.SwinUNETR`:
+On the other hand, the `model` parameter is an instance of a class that implement `ModelABC`. This means that we need to give `LightningCLI` the class path and the necessary parameters to instantiate this specific class. Let's choose [`mfai.pytorch.models.swineunetr.SwinUNETR`](https://github.com/meteofrance/mfai/blob/main/mfai/pytorch/models/swinunetr.py#L68):
 ```py
 class SwinUNETR(ModelABC, MonaiSwinUNETR):
     def __init__(
