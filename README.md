@@ -1,4 +1,10 @@
-# Sargasses
+This project is an educational exemple of an image detection task solved using pytorch, pytorch_lightning and mfai.
+
+You can find the followind educational ressources to guide you through the different facets of this project:
+- [pytorch lightning guide](./doc/pytorch_lightning.md)
+- [mfai](./doc/mfai.md)
+
+## Sargasses
 
 The goal of this project is to detect Sargassum shoals on Sentinel 3 satellite images, using Deep Learning.
 
