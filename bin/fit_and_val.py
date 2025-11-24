@@ -67,15 +67,15 @@ def fit_and_val(
 
 if __name__ == "__main__":
     # Parse ckpt_path argument and remove it from sys.argv as
-    # it is not expected by LightningCli
+    #   it is not expected by LightningCli
     parser = argparse.ArgumentParser()
     parser.add_argument("--ckpt_path", type=str, default=None, dest="ckpt_path")
     parsed_arguments, unparsed_arguments = (
         parser.parse_known_args()
-    )  # only parse ckpt_path
+    )  # Only parse ckpt_path
     sys.argv = (
         sys.argv[:1] + unparsed_arguments
-    )  # remove parsed arguments from sys.argv
+    )  # Remove parsed arguments from sys.argv
 
     # Update args with checkpoint's config file path if necessary
     config_args = None
