@@ -3,9 +3,9 @@ from pathlib import Path
 import numpy as np
 
 from bin.fit_and_val import fit_and_val
-from bin.predict import ckpt_predict
 from bin.onnx.ckpt_to_onnx import ckpt_to_onnx
 from bin.onnx.predict_onnx import onnx_predict
+from bin.predict import ckpt_predict
 from sargasses.sample import Sample
 from tests import SargassesDataModuleTest
 
@@ -47,10 +47,9 @@ def test_full_pipeline() -> None:
         "Retrain from checkpoint did not save a checkpoint."
     )
 
-
     # Predict from checkpoint
     image = Sample.load_otci_image(image_path)
-    ckpt_prediction: np.ndarray = ckpt_predict(
+    _: np.ndarray = ckpt_predict(
         ckpt_path=ckpt_path,
         image=image,
     )
@@ -59,7 +58,7 @@ def test_full_pipeline() -> None:
     ckpt_to_onnx(ckpt_path, onnx_path)
 
     # Predict from onnx
-    onnx_prediction: np.ndarray = onnx_predict(
+    _: np.ndarray = onnx_predict(
         onnx_path=onnx_path,
         image=image,
         altitude_mask=None,
@@ -68,6 +67,7 @@ def test_full_pipeline() -> None:
     # Compare checkpoint and onnx prediction
     # TODO: Check why do not work
     # assert np.array_equal(ckpt_prediction, onnx_prediction)
+
 
 if __name__ == "__main__":
     test_full_pipeline()
