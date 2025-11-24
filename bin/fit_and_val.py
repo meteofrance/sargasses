@@ -31,8 +31,8 @@ from sargasses.plmodule import SargassesLightningModule
 
 def fit_and_val(
     datamodule_cls: type[LightningDataModule] = SargassesDataModule,
-    args: list[str] = None,
-    ckpt_path: str = None,
+    args: list[str] | None = None,
+    ckpt_path: Path | None = None,
 ) -> None:
     """Fits and validates a model.
 
