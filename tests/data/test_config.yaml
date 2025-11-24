@@ -11,7 +11,7 @@ model:
         autopad_enabled: true
         num_filters: 16
         use_ghost: false
-  type_segmentation: "binary"
+  segmentation_type: "binary"
   loss:
     class_path: mfai.pytorch.losses.toolbelt.DiceLoss
     init_args:

@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import torch
-from mfai.pytorch.transforms import RandomCropWithMinPositivePixels
 from torch import Tensor
 from tqdm import tqdm
 
@@ -14,14 +13,9 @@ from sargasses.settings import (
     ALGAE_MASK_PATH,
     CROP_SIZE,
     CROPS_FILE,
-    MIN_POSITIVE_PERC,
+    OTCI_PATH,
     PLOTS_PATH,
     SHAPE_IMGS,
-    TRIES,
-)
-
-cropper = RandomCropWithMinPositivePixels(
-    crop_size=CROP_SIZE, min_positive_percentage=MIN_POSITIVE_PERC, tries=TRIES
 )
 
 
@@ -40,14 +34,22 @@ class SargassesDataset(torch.utils.data.Dataset):
         pct_in_train: Defines the percentage of the total dataset
             included in it's train subsection.
         """
+
         self.split = split
         self.pct_in_train = pct_in_train
 
-        # read df with precomputed crops
-        df = pd.read_csv(CROPS_FILE)
+        # Load input file paths
+        self.algae_masks = [
+            path
+            for path in list(ALGAE_MASK_PATH.glob("*.npz"))
+            if (OTCI_PATH / f"{path.name[:8]}S3_OTCI.png").exists()
+        ]
 
-        # filter dates for the different splits
-        filenames = sorted(list(pd.unique(df.algae_mask_path)))
+        # Read dataframe with precomputed crops
+        crops_dataframe = pd.read_csv(CROPS_FILE)
+
+        # Filter dates for the different splits
+        filenames = sorted(list(pd.unique(crops_dataframe.algae_mask_path)))
         num_day_month_test_or_train = (
             30 * self.pct_in_train
         )  # 30 is an approx of number of days per month
@@ -68,24 +70,37 @@ class SargassesDataset(torch.utils.data.Dataset):
             self.dates = dates_valid_and_test[len(dates_valid_and_test) // 2 :]
 
         # Filter and sort dataframe
-        df = df[df["algae_mask_path"].isin(self.dates)]
-        self.df_crops = df.sort_values("algae_mask_path", ascending=True)  # type: ignore[reportAttributeAccessIssue]
+        crops_dataframe = crops_dataframe[
+            crops_dataframe["algae_mask_path"].isin(self.dates)
+        ]
+        self.crops_dataframe = crops_dataframe.sort_values(  # type: ignore[reportAttributeAccessIssue]
+            "algae_mask_path", ascending=True
+        )
 
     def __len__(self) -> int:
         """Required to define a torch.utils.data.Dataset."""
-        return len(self.df_crops.index)
+        return len(self.crops_dataframe.index)
 
     def __getitem__(self, idx: int) -> tuple[Tensor, Tensor]:
         """Required to define a torch.utils.data.Dataset."""
-        df_crop = self.df_crops.iloc[idx]
+
+        # Retreive crop information
+        df_crop = self.crops_dataframe.iloc[idx]
         algae_mask_path, left, top = df_crop[["algae_mask_path", "left", "top"]].values
+        crop: tuple[int, int, int, int] = (top, left, CROP_SIZE[0], CROP_SIZE[1])
+
+        # Retreive data
         sample = Sample(Path(algae_mask_path))
-        x, y = sample.get_cropped_xy(top, left)
+        x: Tensor
+        y: Tensor
+        x, y = sample.get_xy(crop)
+
         return Tensor(x), Tensor(y)
 
 
 if __name__ == "__main__":
     from sargasses.plots import plot_sample, plot_xy
+
     """Dataset inspection.
     Helps developpers to peer into the inner working of the
     Dataset class and make manual checks.
@@ -109,7 +124,7 @@ if __name__ == "__main__":
     # Plots repartition of crops for all samples
     for path in tqdm(sorted(list(ALGAE_MASK_PATH.glob("*.npz")))):
         sample = Sample(path)
-        df = dataset.df_crops
+        df = dataset.crops_dataframe
         df = df[df["algae_mask_path"] == str(path)]
 
         res = np.zeros(SHAPE_IMGS)
@@ -119,9 +134,9 @@ if __name__ == "__main__":
             res[top : top + 512, left : left + 512] += np.ones((512, 512))
 
         fig, axs = plt.subplots(2, 2, figsize=(12, 8))
-        axs[0, 0].imshow(sample.otci)
+        axs[0, 0].imshow(sample.input_image)
         axs[0, 0].set_title("OTCI")
-        axs[0, 1].imshow(sample.label_mask)
+        axs[0, 1].imshow(sample.target_mask)
         axs[0, 1].set_title("Label Mask")
         axs[1, 1].imshow(res, vmin=0, vmax=30)
         axs[1, 1].set_title("Crops")

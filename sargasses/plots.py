@@ -70,8 +70,8 @@ def plot_sample(
     """
 
     plot_xy(
-        input_image=torch.from_numpy(sample.otci),
-        target_mask=torch.from_numpy(sample.label_mask),
+        input_image=torch.from_numpy(sample.input_image),
+        target_mask=torch.from_numpy(sample.target_mask),
         crop=crop,
         title=title,
         save_path=save_path,
@@ -140,7 +140,7 @@ def plot_prediction(
         np.nansum(true_positive) + np.nansum(false_negative)
     )
 
-    # define labels names and colors for plots
+    # Define labels names and colors for plots
     masks_for_plots = [true_positive, false_positive, false_negative]
     colors_for_plots = ["lime", "magenta", "red"]
     labels_for_plots = ["Détections", "Fausses alarmes", "Non détections"]
@@ -153,15 +153,15 @@ def plot_prediction(
         fontsize=10,
     )
 
-    # plot background map with otci image
+    # Plot background map with otci image
     plt.imshow(x_otci[0].astype(int), interpolation="none", alpha=0.4)
 
-    # plot binary masks
+    # Plot binary masks
     for i, mask in enumerate(masks_for_plots):
         cmp = ListedColormap(["white", colors_for_plots[i]])
         plt.imshow(mask, interpolation="none", cmap=cmp, vmin=0, vmax=1, alpha=1)
 
-    # custom legends
+    # Custom legends
     legend_elements = [
         Patch(facecolor=colors_for_plots[i], edgecolor="w", label=labels_for_plots[i])
         for i in range(3)
